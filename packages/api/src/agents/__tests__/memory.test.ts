@@ -5,21 +5,29 @@ import type { MemoryArtifact } from 'librechat-data-provider';
 import { createMemoryTool, processMemory } from '../memory';
 
 // Mock the logger
-jest.mock('winston', () => ({
-  createLogger: jest.fn(() => ({
-    debug: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  })),
-  format: {
-    combine: jest.fn(),
-    colorize: jest.fn(),
-    simple: jest.fn(),
-  },
-  transports: {
-    Console: jest.fn(),
-  },
-}));
+jest.mock('winston', () => {
+  const mockFormat = jest.fn(() => ({ transform: jest.fn() }));
+  mockFormat.combine = jest.fn();
+  mockFormat.colorize = jest.fn();
+  mockFormat.simple = jest.fn();
+  mockFormat.timestamp = jest.fn();
+  mockFormat.printf = jest.fn();
+  mockFormat.errors = jest.fn();
+
+  return {
+    createLogger: jest.fn(() => ({
+      debug: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      info: jest.fn(),
+    })),
+    format: mockFormat,
+    transports: {
+      Console: jest.fn(),
+      File: jest.fn(),
+    },
+  };
+});
 
 // Mock the Tokenizer
 jest.mock('~/utils', () => ({

@@ -90,7 +90,7 @@ export const renderAgentAvatar = (
     xl: 'h-10 w-10',
   };
 
-  const placeholderSizeClasses = {
+  const _placeholderSizeClasses = {
     icon: 'h-5 w-5',
     sm: 'h-10 w-10 sm:h-12 sm:w-12',
     md: 'h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20',

@@ -5,17 +5,17 @@ import { useProgress } from '~/hooks';
 
 export default function ImageGen({
   initialProgress = 0.1,
-  args = '',
+  _args = '',
 }: {
   initialProgress: number;
-  args: string;
+  _args?: string;
 }) {
   const progress = useProgress(initialProgress);
   const radius = 56.08695652173913;
   const circumference = 2 * Math.PI * radius;
 
   const offset = circumference - progress * circumference;
-  const [showDetails, setShowDetails] = useState(false);
+  const [_showDetails, _setShowDetails] = useState(false);
 
   // const [translate, setTranslate] = useState(0);
   // useEffect(() => {

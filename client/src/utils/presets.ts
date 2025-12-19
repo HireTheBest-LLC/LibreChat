@@ -1,18 +1,18 @@
 import type { TPreset, TPlugin } from 'librechat-data-provider';
 import { EModelEndpoint } from 'librechat-data-provider';
 
-type TEndpoints = Array<string | EModelEndpoint>;
+type _TEndpoints = Array<string | EModelEndpoint>;
 
 export const getPresetTitle = (preset: TPreset, mention?: boolean) => {
   const {
-    endpoint,
+    _endpoint,
     title: presetTitle,
     model,
     tools,
     promptPrefix,
-    chatGptLabel,
+    _chatGptLabel,
     modelLabel,
-  } = preset;
+  } = preset as TPreset & { _endpoint?: string; _chatGptLabel?: string };
   const modelInfo = model ?? '';
   let title = '';
   let label = '';

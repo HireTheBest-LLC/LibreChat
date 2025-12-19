@@ -1,6 +1,5 @@
 import { EModelEndpoint } from 'librechat-data-provider';
 import cleanupPreset from '../cleanupPreset';
-import type { TPreset } from 'librechat-data-provider';
 
 // Mock parseConvo since we're focusing on testing the chatGptLabel migration logic
 jest.mock('librechat-data-provider', () => ({

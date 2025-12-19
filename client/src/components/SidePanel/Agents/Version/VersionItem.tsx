@@ -28,7 +28,7 @@ export default function VersionItem({
           return localize('com_ui_agent_version_unknown_date');
         }
         return date.toLocaleString();
-      } catch (error) {
+      } catch (_error) {
         return localize('com_ui_agent_version_unknown_date');
       }
     }

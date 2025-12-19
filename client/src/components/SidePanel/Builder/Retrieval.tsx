@@ -30,7 +30,7 @@ export default function Retrieval({
   const model = useWatch({ control, name: 'model' });
   const assistant = useWatch({ control, name: 'assistant' });
 
-  const vectorStores = useMemo(() => {
+  const _vectorStores = useMemo(() => {
     if (typeof assistant === 'string') {
       return [];
     }

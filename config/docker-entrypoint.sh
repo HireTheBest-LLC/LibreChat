@@ -30,10 +30,9 @@ if [ -n "$METHODOLOGY_DIR" ] && [ -d "$METHODOLOGY_DIR" ]; then
 
     if [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; then
       echo "RAG API is ready!"
-      echo "Running init-runpod-agent.js..."
-      node /app/config/init-runpod-agent.js || {
-        echo "Warning: init-runpod-agent.js failed, continuing with server startup"
-      }
+      echo "Running init-runpod-agent.js in background..."
+      # Run in background so server can start immediately
+      node /app/config/init-runpod-agent.js &
     fi
   else
     echo "RAG_API_URL not set, skipping agent initialization"

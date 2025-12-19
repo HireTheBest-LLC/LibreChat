@@ -59,8 +59,8 @@ describe('redisClients Integration Tests', () => {
         if (keys.length > 0) {
           await ioredisClient.del(...keys);
         }
-      } catch (error: any) {
-        console.warn('Error cleaning up test keys:', error.message);
+      } catch (error: unknown) {
+        console.warn('Error cleaning up test keys:', (error as Error).message);
       }
     }
 
@@ -70,8 +70,8 @@ describe('redisClients Integration Tests', () => {
         if (ioredisClient.status === 'ready') {
           ioredisClient.disconnect();
         }
-      } catch (error: any) {
-        console.warn('Error disconnecting ioredis client:', error.message);
+      } catch (error: unknown) {
+        console.warn('Error disconnecting ioredis client:', (error as Error).message);
       }
       ioredisClient = null;
     }
@@ -80,8 +80,8 @@ describe('redisClients Integration Tests', () => {
       try {
         // Try to disconnect - keyv/redis client doesn't have an isReady property
         await keyvRedisClient.disconnect();
-      } catch (error: any) {
-        console.warn('Error disconnecting keyv redis client:', error.message);
+      } catch (error: unknown) {
+        console.warn('Error disconnecting keyv redis client:', (error as Error).message);
       }
       keyvRedisClient = null;
     }

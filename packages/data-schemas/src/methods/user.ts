@@ -295,7 +295,7 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
       .slice(0, limit)
       .map((user) => {
         // Remove the search score from final results
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         const { _searchScore, ...userWithoutScore } = user;
         return userWithoutScore;
       });

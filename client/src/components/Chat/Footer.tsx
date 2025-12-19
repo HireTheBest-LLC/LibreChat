@@ -39,13 +39,12 @@ export default function Footer({ className }: { className?: string }) {
     </a>
   );
 
-  const copyrightNotice = '© & ™ 2019-2025 Andrey V. Karpov, HireTheBest LLC dba TrueAgileMindset AI, Vicktoria AI, Vicka AI, & Memorandum Project. All Rights Reserved.';
+  const copyrightNotice =
+    '© & ™ 2019-2025 Andrey V. Karpov, HireTheBest LLC dba TrueAgileMindset AI, Vicktoria AI, Vicka AI, & Memorandum Project. All Rights Reserved.';
 
-  const mainContentParts = (
-    typeof config?.customFooter === 'string'
-      ? config.customFooter
-      : ''
-  ).split('|').filter(Boolean);
+  const mainContentParts = (typeof config?.customFooter === 'string' ? config.customFooter : '')
+    .split('|')
+    .filter(Boolean);
 
   useEffect(() => {
     if (config?.analyticsGtmId != null && typeof window.google_tag_manager === 'undefined') {

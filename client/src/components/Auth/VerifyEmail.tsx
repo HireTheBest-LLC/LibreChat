@@ -36,7 +36,7 @@ function RequestPasswordReset() {
       setVerificationStatus(true);
       countdownRedirect();
     },
-    onError: (error: unknown) => {
+    onError: (_error: unknown) => {
       setHeaderText(localize('com_auth_email_verification_failed') + ' 😢');
       setShowResendLink(true);
       setVerificationStatus(true);

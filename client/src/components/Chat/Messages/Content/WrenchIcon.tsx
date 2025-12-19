@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function WrenchIcon() {
-  const [rotate, setRotate] = useState(false);
+  const [_rotate, setRotate] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {

@@ -53,7 +53,7 @@ export const fileTableColumns: ColumnDef<TFile>[] = [
       size: '150px',
     },
     accessorKey: 'filename',
-    header: ({ column }) => {
+    header: () => {
       const localize = useLocalize();
       return <>{localize('com_ui_name')}</>;
     },
@@ -100,7 +100,6 @@ export const fileTableColumns: ColumnDef<TFile>[] = [
   {
     accessorKey: 'updatedAt',
     header: () => {
-      const localize = useLocalize();
       return 'Modified';
     },
     cell: ({ row }) => formatDate(row.original.updatedAt),
@@ -110,7 +109,7 @@ export const fileTableColumns: ColumnDef<TFile>[] = [
     header: () => {
       return 'Actions';
     },
-    cell: ({ row }) => {
+    cell: () => {
       return (
         <>
           <Button className="w-min content-center bg-transparent text-gray-500 hover:bg-slate-200">

@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { Input, Label } from '@librechat/client';
 import type { ChangeEvent, FC, Ref } from 'react';
-import { cn, defaultTextPropsLabel, removeFocusOutlines, defaultTextProps } from '~/utils/';
+import { cn } from '~/utils/';
 import { useLocalize } from '~/hooks';
 
 interface InputWithLabelProps {
@@ -16,7 +16,7 @@ interface InputWithLabelProps {
 }
 
 const InputWithLabel: FC<InputWithLabelProps> = forwardRef((props, ref) => {
-  const { id, value, label, subLabel, onChange, labelClassName = '', inputClassName = '' } = props;
+  const { id, value, label, subLabel, onChange, labelClassName = '' } = props;
   const localize = useLocalize();
   return (
     <>

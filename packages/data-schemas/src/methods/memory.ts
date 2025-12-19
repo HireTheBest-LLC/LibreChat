@@ -166,7 +166,7 @@ export function createMemoryMethods(mongoose: typeof import('mongoose')) {
       }
 
       const fields = Object.entries(catData as Record<string, unknown>)
-        .filter(([_, v]) => v !== null && v !== undefined && v !== '')
+        .filter(([_key, v]) => v !== null && v !== undefined && v !== '')
         .map(([k, v]) => {
           if (Array.isArray(v)) {
             return v.length > 0 ? `${k}:[${v.join(',')}]` : null;

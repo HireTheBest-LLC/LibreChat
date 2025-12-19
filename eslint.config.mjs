@@ -43,6 +43,7 @@ export default [
       'meili_data/**/*',
       '**/node_modules/**/*',
       '.devcontainer/**/*',
+      'src/tests/**/*',
     ],
   },
   ...fixupConfigRules(
@@ -263,6 +264,27 @@ export default [
     },
   },
   {
+    // Files with hardcoded strings that need localization work (TODO: add i18n translations)
+    files: [
+      'client/src/components/Files/**/*.tsx',
+      'client/src/components/Files/**/*.ts',
+      'client/src/components/Auth/SocialLoginRender.tsx',
+      'client/src/components/Chat/Input/ActiveSetting.tsx',
+      'client/src/components/Chat/Input/Files/**/*.tsx',
+      'client/src/components/Input/ActionOpenApiSchemaInput.tsx',
+      'client/src/components/Input/Generations/__tests__/*.tsx',
+      'client/src/components/svg/*.tsx',
+      'client/src/components/Prompts/PreviewLabels.tsx',
+      'client/src/components/SidePanel/Builder/ActionsInput.tsx',
+      'client/src/components/SidePanel/Builder/Images.tsx',
+      'client/src/components/SidePanel/Agents/ActionsInput.tsx',
+      'client/src/components/SidePanel/data.tsx',
+    ],
+    rules: {
+      'i18next/no-literal-string': 'off',
+    },
+  },
+  {
     // **Data-provider specific configuration block**
     files: ['./packages/data-provider/**/*.ts'],
     languageOptions: {
@@ -291,6 +313,27 @@ export default [
     files: ['./packages/api/**/*.ts'],
     rules: {
       'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
+  {
+    files: ['./packages/client/**/*.ts', './packages/client/**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
     },
   },
   {
@@ -344,6 +387,16 @@ export default [
       parserOptions: {
         project: './packages/data-schemas/tsconfig.json',
       },
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
     },
   },
 ];

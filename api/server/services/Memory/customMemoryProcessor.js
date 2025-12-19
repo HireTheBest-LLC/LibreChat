@@ -15,7 +15,7 @@ const USER_SUMMARY_KEY = 'user_summary';
 async function processCustomMemory({
   userId,
   conversationText,
-  memoryConfig,
+  _memoryConfig,
   endpointConfig,
   memoryMethods,
 }) {
@@ -71,7 +71,7 @@ async function getExistingSummary(userId, memoryMethods) {
     const memories = await memoryMethods.getAllUserMemories(userId);
     const summary = memories?.find((m) => m.key === USER_SUMMARY_KEY);
     return summary?.value || '';
-  } catch (error) {
+  } catch (_error) {
     return '';
   }
 }

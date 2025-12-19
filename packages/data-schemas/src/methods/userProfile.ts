@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import logger from '~/config/winston';
-import type * as t from '~/types';
+import type * as _t from '~/types';
 import { PROFILE_CATEGORIES } from '~/types/userProfile';
 import type {
   IUserProfile,
@@ -130,7 +130,7 @@ export function createProfileMethods(mongoose: typeof import('mongoose')) {
         }
 
         const fields = Object.entries(catData)
-          .filter(([_, v]) => v !== null && v !== undefined && v !== '')
+          .filter(([_key, v]) => v !== null && v !== undefined && v !== '')
           .map(([k, v]) => {
             totalFields++;
             if (Array.isArray(v)) {

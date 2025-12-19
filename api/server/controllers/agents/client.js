@@ -13,7 +13,7 @@ const {
   initializeAgent,
   getBalanceConfig,
   getProviderConfig,
-  memoryInstructions,
+  _memoryInstructions,
   getTransactionsConfig,
   createMemoryProcessor,
   filterMalformedContentParts,

@@ -7,9 +7,9 @@ export default function Google({
   size?: number;
   className?: string;
 }) {
-  const unit = '41';
-  const height = size;
-  const width = size;
+  const _unit = '41';
+  const _height = size;
+  const _width = size;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

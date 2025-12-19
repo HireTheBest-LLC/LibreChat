@@ -66,6 +66,8 @@ describe('MCPServersRegistry Redis Integration Tests', () => {
     process.env.REDIS_KEY_PREFIX =
       process.env.REDIS_KEY_PREFIX ??
       `MCPServersRegistry-IntegrationTest-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    // Disable ping interval in tests to prevent timer leaks
+    process.env.REDIS_PING_INTERVAL = '0';
 
     // Import modules after setting env vars
     const registryModule = await import('../MCPServersRegistry');

@@ -12,6 +12,8 @@ describe('RegistryStatusCache Integration Tests', () => {
     process.env.REDIS_URI = process.env.REDIS_URI ?? 'redis://127.0.0.1:6379';
     process.env.REDIS_KEY_PREFIX =
       process.env.REDIS_KEY_PREFIX ?? 'RegistryStatusCache-IntegrationTest';
+    // Disable ping interval in tests to prevent timer leaks
+    process.env.REDIS_PING_INTERVAL = '0';
 
     // Import modules after setting env vars
     const statusCacheModule = await import('../RegistryStatusCache');

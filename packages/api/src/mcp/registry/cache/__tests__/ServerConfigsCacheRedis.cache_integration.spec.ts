@@ -36,6 +36,8 @@ describe('ServerConfigsCacheRedis Integration Tests', () => {
       'redis://127.0.0.1:7001,redis://127.0.0.1:7002,redis://127.0.0.1:7003';
     process.env.REDIS_KEY_PREFIX =
       process.env.REDIS_KEY_PREFIX ?? 'ServerConfigsCacheRedis-IntegrationTest';
+    // Disable ping interval in tests to prevent timer leaks
+    process.env.REDIS_PING_INTERVAL = '0';
 
     // Import modules after setting env vars
     const cacheModule = await import('../ServerConfigsCacheRedis');

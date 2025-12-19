@@ -10,6 +10,8 @@ describe('redisUtils Integration Tests', () => {
     process.env.REDIS_URI = process.env.REDIS_URI ?? 'redis://127.0.0.1:6379';
     process.env.REDIS_KEY_PREFIX = process.env.REDIS_KEY_PREFIX ?? testPrefix;
     process.env.REDIS_DELETE_CHUNK_SIZE = '100';
+    // Disable ping interval in tests to prevent timer leaks
+    process.env.REDIS_PING_INTERVAL = '0';
 
     // Clear module cache to ensure fresh initialization with new env vars
     jest.resetModules();

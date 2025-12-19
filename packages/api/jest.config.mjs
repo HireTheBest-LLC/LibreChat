@@ -7,6 +7,7 @@ export default {
     '\\.dev\\.ts$',
     '\\.helper\\.ts$',
     '\\.helper\\.d\\.ts$',
+    '_integration\\.spec\\.ts$',
   ],
   coverageReporters: ['text', 'cobertura'],
   testResultsProcessor: 'jest-junit',

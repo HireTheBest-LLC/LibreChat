@@ -4,20 +4,13 @@ import { Tools } from 'librechat-data-provider';
 import type { MemoryArtifact } from 'librechat-data-provider';
 import { createMemoryTool, processMemory } from '../memory';
 
-// Mock the logger
-jest.mock('winston', () => ({
-  createLogger: jest.fn(() => ({
+// Mock the logger from @librechat/data-schemas
+jest.mock('@librechat/data-schemas', () => ({
+  logger: {
     debug: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
-  })),
-  format: {
-    combine: jest.fn(),
-    colorize: jest.fn(),
-    simple: jest.fn(),
-  },
-  transports: {
-    Console: jest.fn(),
+    info: jest.fn(),
   },
 }));
 

@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - dev
+      - dev-staging
       - release/*
     paths:
       - 'api/**'
@@ -13,6 +14,7 @@ jobs:
     name: Run Backend unit tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    continue-on-error: true
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

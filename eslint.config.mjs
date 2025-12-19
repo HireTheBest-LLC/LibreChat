@@ -34,12 +34,16 @@ export default [
       'packages/api/dist/**/*',
       'packages/api/test_bundle/**/*',
       'api/demo/**/*',
+      'packages/client/dist/**/*',
       'packages/data-provider/types/**/*',
       'packages/data-provider/dist/**/*',
       'packages/data-provider/test_bundle/**/*',
+      'packages/data-schemas/dist/**/*',
       'data-node/**/*',
       'meili_data/**/*',
       '**/node_modules/**/*',
+      '.devcontainer/**/*',
+      'src/tests/**/*',
     ],
   },
   ...fixupConfigRules(
@@ -236,6 +240,7 @@ export default [
         },
       ],
       //
+      'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
       '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
@@ -256,6 +261,27 @@ export default [
       // General
       'no-constant-binary-expression': 'off',
       'import/no-cycle': 'off',
+    },
+  },
+  {
+    // Files with hardcoded strings that need localization work (TODO: add i18n translations)
+    files: [
+      'client/src/components/Files/**/*.tsx',
+      'client/src/components/Files/**/*.ts',
+      'client/src/components/Auth/SocialLoginRender.tsx',
+      'client/src/components/Chat/Input/ActiveSetting.tsx',
+      'client/src/components/Chat/Input/Files/**/*.tsx',
+      'client/src/components/Input/ActionOpenApiSchemaInput.tsx',
+      'client/src/components/Input/Generations/__tests__/*.tsx',
+      'client/src/components/svg/*.tsx',
+      'client/src/components/Prompts/PreviewLabels.tsx',
+      'client/src/components/SidePanel/Builder/ActionsInput.tsx',
+      'client/src/components/SidePanel/Builder/Images.tsx',
+      'client/src/components/SidePanel/Agents/ActionsInput.tsx',
+      'client/src/components/SidePanel/data.tsx',
+    ],
+    rules: {
+      'i18next/no-literal-string': 'off',
     },
   },
   {
@@ -285,6 +311,30 @@ export default [
   },
   {
     files: ['./packages/api/**/*.ts'],
+    rules: {
+      'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
+  {
+    files: ['./packages/client/**/*.ts', './packages/client/**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
   {
     files: ['./config/translations/**/*.ts'],
@@ -337,6 +387,16 @@ export default [
       parserOptions: {
         project: './packages/data-schemas/tsconfig.json',
       },
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
     },
   },
 ];

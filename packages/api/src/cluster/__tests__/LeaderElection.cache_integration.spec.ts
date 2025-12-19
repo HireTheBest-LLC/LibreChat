@@ -11,6 +11,8 @@ describe('LeaderElection with Redis', () => {
     process.env.USE_REDIS = 'true';
     process.env.REDIS_URI = process.env.REDIS_URI ?? 'redis://127.0.0.1:6379';
     process.env.REDIS_KEY_PREFIX = 'LeaderElection-IntegrationTest';
+    // Disable ping interval in tests to prevent timer leaks
+    process.env.REDIS_PING_INTERVAL = '0';
 
     // Import modules after setting env vars
     const leaderElectionModule = await import('../LeaderElection');

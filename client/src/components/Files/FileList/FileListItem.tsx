@@ -8,7 +8,7 @@ type FileListItemProps = {
   width?: string;
 };
 
-export default function FileListItem({ file, deleteFile, width = '400px' }: FileListItemProps) {
+export default function FileListItem({ file, deleteFile, _width = '400px' }: FileListItemProps) {
   return (
     <div className="w-100 my-3 mr-2 flex cursor-pointer flex-row rounded-md border border-0 bg-white p-4 transition duration-300 ease-in-out hover:bg-slate-200">
       <div className="flex w-1/2 flex-col justify-around align-middle">

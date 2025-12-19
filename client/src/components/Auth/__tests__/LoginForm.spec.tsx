@@ -113,7 +113,7 @@ test('renders login form', () => {
 });
 
 test('submits login form', async () => {
-  const { getByLabelText, getByRole } = render(
+  const { getByLabelText } = render(
     <Login onSubmit={mockLogin} startupConfig={mockStartupConfig} />,
   );
   const emailInput = getByLabelText(/email/i);
@@ -128,7 +128,7 @@ test('submits login form', async () => {
 });
 
 test('displays validation error messages', async () => {
-  const { getByLabelText, getByRole, getByText } = render(
+  const { getByLabelText, getByText } = render(
     <Login onSubmit={mockLogin} startupConfig={mockStartupConfig} />,
   );
   const emailInput = getByLabelText(/email/i);

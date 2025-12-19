@@ -61,7 +61,7 @@ export default function OpenAIImageGen({
         quality = q;
       }
     }
-  } catch (e) {
+  } catch (_e) {
     width = undefined;
     height = undefined;
   }

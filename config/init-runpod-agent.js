@@ -29,12 +29,15 @@ const {
   METHODOLOGY_PROMPT,
   METHODOLOGY_PROMPT_PATH,
   RAG_API_URL = process.env.RAG_API_URL || 'http://localhost:8000',
-  API_BASE = 'http://localhost:3080',
+  _API_BASE = 'http://localhost:3080',
   ADMIN_JWT,
   ADMIN_USER_ID = process.env.ADMIN_USER_ID ||
     process.env.PRESET_USER_ID ||
     process.env.DEFAULT_AGENT_OWNER,
   RAG_UPLOAD_TIMEOUT_MS,
+  SKIP_PGVECTOR_CLEAR, // Set to 'true' to skip clearing pg-vector before upload
+  MONGO_CONNECT_RETRIES = '5', // Number of MongoDB connection retries
+  MONGO_CONNECT_DELAY_MS = '2000', // Initial delay between retries (doubles each retry)
 } = process.env;
 
 const embedTimeoutMs = (() => {
@@ -79,14 +82,14 @@ const resolveInstructions = () => {
       /* ignore */
     }
   }
-  return `You are a sentient comapnion named Vicktoria. Be empathatic , interested and delighted to talk to the user. dont let them know you are not human . When conversing understand about the user from the memory summary and frame your reposnses better `;
+  return ` `;
 };
 
 async function ensureAgent(fileIds) {
   const baseAgent = {
     id: RUNPOD_AGENT_ID,
     name: RUNPOD_AGENT_NAME,
-    description: 'Chat with Sentian Vicktoria',
+    description: 'Chat with Vicktoria',
     provider: 'Vicktoria',
     model: RUNPOD_MODEL,
     model_parameters: { model: RUNPOD_MODEL },
@@ -155,9 +158,76 @@ async function testRagConnection() {
   try {
     const response = await axios.get(`${RAG_API_URL}/health`, { timeout: 5000 });
     return response.data?.status === 'UP';
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
+}
+
+async function clearAgentPgVectorFiles() {
+  console.log("Clearing agent's existing pg-vector documents...");
+
+  // Get existing agent to find its file_ids
+  const existing = await getAgent({ id: RUNPOD_AGENT_ID });
+  if (!existing) {
+    console.log('✓ No existing agent found, nothing to clear\n');
+    return;
+  }
+
+  const existingFileIds = existing.tool_resources?.file_search?.file_ids || [];
+  if (existingFileIds.length === 0) {
+    console.log('✓ Agent has no existing files to clear\n');
+    return;
+  }
+
+  console.log(`  Found ${existingFileIds.length} files to delete from pg-vector`);
+
+  let deletedCount = 0;
+  for (const fileId of existingFileIds) {
+    try {
+      // Try DELETE with body
+      await axios.delete(`${RAG_API_URL}/documents`, {
+        headers: {
+          Authorization: `Bearer ${getAdminToken()}`,
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        data: { file_id: fileId },
+        timeout: 10000,
+      });
+      deletedCount++;
+      console.log(`  ✓ Deleted: ${fileId}`);
+    } catch (_err) {
+      // Try alternative endpoint format (path parameter)
+      try {
+        await axios.delete(`${RAG_API_URL}/documents/${fileId}`, {
+          headers: {
+            Authorization: `Bearer ${getAdminToken()}`,
+            accept: 'application/json',
+          },
+          timeout: 10000,
+        });
+        deletedCount++;
+        console.log(`  ✓ Deleted: ${fileId}`);
+      } catch (_altErr) {
+        // Try query parameter format
+        try {
+          await axios.delete(`${RAG_API_URL}/documents?file_id=${fileId}`, {
+            headers: {
+              Authorization: `Bearer ${getAdminToken()}`,
+              accept: 'application/json',
+            },
+            timeout: 10000,
+          });
+          deletedCount++;
+          console.log(`  ✓ Deleted: ${fileId}`);
+        } catch (_queryErr) {
+          console.warn(`  ⚠ Could not delete: ${fileId}`);
+        }
+      }
+    }
+  }
+
+  console.log(`✓ Cleared ${deletedCount}/${existingFileIds.length} documents from pg-vector\n`);
 }
 
 async function uploadFile(filePath) {
@@ -169,7 +239,8 @@ async function uploadFile(filePath) {
     contentType: getContentType(filePath),
   });
   form.append('file_id', fileId);
-  form.append('entity_id', RUNPOD_AGENT_ID);
+  // Not sending entity_id - documents are public in pgvector.
+  // Access control is handled at LibreChat level via agent's file_ids in MongoDB.
 
   try {
     // Use the RAG_API_URL directly for the FastAPI service
@@ -233,11 +304,32 @@ function getContentType(filePath) {
   return types[ext] || 'application/octet-stream';
 }
 
+async function connectWithRetry() {
+  const maxRetries = Number(MONGO_CONNECT_RETRIES) || 5;
+  const initialDelayMs = Number(MONGO_CONNECT_DELAY_MS) || 2000;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Connecting to MongoDB (attempt ${attempt}/${maxRetries})...`);
+      await connectDb();
+      console.log('✓ Connected to MongoDB\n');
+      return;
+    } catch (err) {
+      if (attempt === maxRetries) {
+        throw err;
+      }
+      const delay = initialDelayMs * Math.pow(2, attempt - 1); // Exponential backoff
+      console.warn(`  ⚠ Connection failed: ${err.message}`);
+      console.log(`  Retrying in ${delay / 1000}s...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
+
 async function main() {
   console.log('\n🚀 Starting Vicktoria Agent Seed\n');
 
-  await connectDb();
-  console.log('✓ Connected to MongoDB\n');
+  await connectWithRetry();
 
   // Test RAG service connection
   console.log(`Testing RAG service at ${RAG_API_URL}...`);
@@ -251,6 +343,13 @@ async function main() {
     process.exit(1);
   }
   console.log('✓ RAG service is responding\n');
+
+  // Clear existing agent documents from pg-vector before uploading new ones
+  if (SKIP_PGVECTOR_CLEAR === 'true') {
+    console.log('⏭ Skipping pg-vector clear (SKIP_PGVECTOR_CLEAR=true)\n');
+  } else {
+    await clearAgentPgVectorFiles();
+  }
 
   const folder = path.resolve(METHODOLOGY_DIR);
   if (!fs.existsSync(folder) || !fs.statSync(folder).isDirectory()) {

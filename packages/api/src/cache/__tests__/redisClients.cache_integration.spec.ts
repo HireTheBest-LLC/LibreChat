@@ -40,7 +40,8 @@ describe('redisClients Integration Tests', () => {
     originalEnv = { ...process.env };
 
     // Set common test configuration with fallback defaults for local testing
-    process.env.REDIS_PING_INTERVAL = '1000';
+    // Disable ping interval in tests to prevent timer leaks
+    process.env.REDIS_PING_INTERVAL = '0';
     process.env.REDIS_KEY_PREFIX = 'Redis-Integration-Test';
     process.env.REDIS_RETRY_MAX_ATTEMPTS = '5';
     process.env.USE_REDIS = process.env.USE_REDIS || 'true';
@@ -59,19 +60,26 @@ describe('redisClients Integration Tests', () => {
         if (keys.length > 0) {
           await ioredisClient.del(...keys);
         }
-      } catch (error: any) {
-        console.warn('Error cleaning up test keys:', error.message);
+      } catch (error: unknown) {
+        console.warn('Error cleaning up test keys:', (error as Error).message);
       }
     }
 
     // Cleanup Redis connections
     if (ioredisClient) {
       try {
-        if (ioredisClient.status === 'ready') {
-          ioredisClient.disconnect();
+        if (ioredisClient.status === 'ready' || ioredisClient.status === 'connecting') {
+          // Use quit() for graceful shutdown that properly triggers close events
+          await ioredisClient.quit();
         }
-      } catch (error: any) {
-        console.warn('Error disconnecting ioredis client:', error.message);
+      } catch (error: unknown) {
+        console.warn('Error disconnecting ioredis client:', (error as Error).message);
+        // Force disconnect if quit fails
+        try {
+          ioredisClient.disconnect();
+        } catch (_e) {
+          // Ignore
+        }
       }
       ioredisClient = null;
     }
@@ -79,9 +87,15 @@ describe('redisClients Integration Tests', () => {
     if (keyvRedisClient) {
       try {
         // Try to disconnect - keyv/redis client doesn't have an isReady property
-        await keyvRedisClient.disconnect();
-      } catch (error: any) {
-        console.warn('Error disconnecting keyv redis client:', error.message);
+        await keyvRedisClient.quit();
+      } catch (error: unknown) {
+        console.warn('Error disconnecting keyv redis client:', (error as Error).message);
+        // Force disconnect if quit fails
+        try {
+          await keyvRedisClient.disconnect();
+        } catch (_e) {
+          // Ignore
+        }
       }
       keyvRedisClient = null;
     }
